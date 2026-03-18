@@ -135,7 +135,81 @@ public struct Podcast: Codable, Hashable, Identifiable, Sendable {
     /// Information for donation/funding the podcast.
     /// See the [podcast namespace spec](https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#funding) for more information.
     public let funding: PodcastFunding?
-    
+
+    public init(
+        id: Int? = nil,
+        title: String? = nil,
+        url: String? = nil,
+        originalUrl: String? = nil,
+        link: String? = nil,
+        podcastDescription: String? = nil,
+        author: String? = nil,
+        ownerName: String? = nil,
+        image: String? = nil,
+        artwork: String? = nil,
+        lastUpdateTime: Date? = nil,
+        lastCrawlTime: Date? = nil,
+        lastParseTime: Date? = nil,
+        lastGoodHttpStatusTime: Date? = nil,
+        lastHttpStatus: Int? = nil,
+        contentType: String? = nil,
+        itunesId: Int? = nil,
+        generator: String? = nil,
+        language: String? = nil,
+        type: PodcastType? = nil,
+        dead: Int? = nil,
+        crawlErrors: Int? = nil,
+        parseErrors: Int? = nil,
+        categories: [String: String]? = nil,
+        locked: PodcastLocked? = nil,
+        podcastGuid: String? = nil,
+        episodeCount: Int? = nil,
+        imageUrlHash: Double? = nil,
+        newestItemPubdate: Date? = nil,
+        explicit: Bool? = nil,
+        itunesType: String? = nil,
+        medium: String? = nil,
+        chash: String? = nil,
+        value: PodcastValue? = nil,
+        funding: PodcastFunding? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.url = url
+        self.originalUrl = originalUrl
+        self.link = link
+        self.podcastDescription = podcastDescription
+        self.author = author
+        self.ownerName = ownerName
+        self.image = image
+        self.artwork = artwork
+        self.lastUpdateTime = lastUpdateTime
+        self.lastCrawlTime = lastCrawlTime
+        self.lastParseTime = lastParseTime
+        self.lastGoodHttpStatusTime = lastGoodHttpStatusTime
+        self.lastHttpStatus = lastHttpStatus
+        self.contentType = contentType
+        self.itunesId = itunesId
+        self.generator = generator
+        self.language = language
+        self.type = type
+        self.dead = dead
+        self.crawlErrors = crawlErrors
+        self.parseErrors = parseErrors
+        self.categories = categories
+        self.locked = locked
+        self.podcastGuid = podcastGuid
+        self.episodeCount = episodeCount
+        self.imageUrlHash = imageUrlHash
+        self.newestItemPubdate = newestItemPubdate
+        self.explicit = explicit
+        self.itunesType = itunesType
+        self.medium = medium
+        self.chash = chash
+        self.value = value
+        self.funding = funding
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case title

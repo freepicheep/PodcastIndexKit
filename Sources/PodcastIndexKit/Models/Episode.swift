@@ -135,7 +135,89 @@ public struct Episode: Codable, Hashable, Identifiable, Sendable {
     /// Status of the livestream
     /// Allowed: ended┃live
     public let status: LivestreamStatus?
-    
+
+    public init(
+        id: Int? = nil,
+        title: String? = nil,
+        link: String? = nil,
+        episodeDescription: String? = nil,
+        guid: String? = nil,
+        datePublished: Date? = nil,
+        datePublishedPretty: String? = nil,
+        dateCrawled: Date? = nil,
+        enclosureUrl: String? = nil,
+        enclosureType: String? = nil,
+        enclosureLength: Int? = nil,
+        contentLink: String? = nil,
+        duration: Int? = nil,
+        explicit: EpisodeExplicitStatus? = nil,
+        episode: Int? = nil,
+        episodeType: EpisodeType? = nil,
+        season: Int? = nil,
+        image: String? = nil,
+        feedItunesId: Int? = nil,
+        feedImage: String? = nil,
+        feedId: Int? = nil,
+        feedLanguage: String? = nil,
+        feedDead: Int? = nil,
+        feedTitle: String? = nil,
+        feedDuplicateOf: Int? = nil,
+        chaptersUrl: String? = nil,
+        transcriptUrl: String? = nil,
+        feedImageUrlHash: Int? = nil,
+        imageUrlHash: Int? = nil,
+        transcripts: [Transcript]? = nil,
+        persons: [Person]? = nil,
+        socialInteract: [SocialInteractData]? = nil,
+        value: Value? = nil,
+        soundbite: Soundbite? = nil,
+        soundbites: [Soundbite]? = nil,
+        transcript: Transcript? = nil,
+        startTime: Int? = nil,
+        endTime: Int? = nil,
+        status: LivestreamStatus? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.link = link
+        self.episodeDescription = episodeDescription
+        self.guid = guid
+        self.datePublished = datePublished
+        self.datePublishedPretty = datePublishedPretty
+        self.dateCrawled = dateCrawled
+        self.enclosureUrl = enclosureUrl
+        self.enclosureType = enclosureType
+        self.enclosureLength = enclosureLength
+        self.contentLink = contentLink
+        self.duration = duration
+        self.explicit = explicit
+        self.episode = episode
+        self.episodeType = episodeType
+        self.season = season
+        self.image = image
+        self.feedItunesId = feedItunesId
+        self.feedImage = feedImage
+        self.feedId = feedId
+        self.feedLanguage = feedLanguage
+        self.feedDead = feedDead
+        self.feedTitle = feedTitle
+        self.feedDuplicateOf = feedDuplicateOf
+        self.chaptersUrl = chaptersUrl
+        self.transcriptUrl = transcriptUrl
+        self.feedImageUrlHash = feedImageUrlHash
+        self.imageUrlHash = imageUrlHash
+        self.transcripts = transcripts
+        self.persons = persons
+        self.socialInteract = socialInteract
+        self.value = value
+        self.soundbite = soundbite
+        self.soundbites = soundbites
+        self.transcript = transcript
+        self.startTime = startTime
+        self.endTime = endTime
+        self.status = status
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case title
