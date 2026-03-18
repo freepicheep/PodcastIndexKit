@@ -108,6 +108,41 @@ public struct AppleReplacementPodcast: Codable, Hashable, Sendable {
 	
 	/// List of genre names.
 	public let genres: [String]?
+    
+    public init(wrapperType: String?, kind: EntityType?, collectionId: Int?, trackId: Int?, artistName: String?, collectionName: String?, trackName: String?, collectionCensoredName: String?, trackCensoredName: String?, collectionViewUrl: String?, feedUrl: String?, trackViewUrl: String?, artworkUrl30: String?, artworkUrl60: String?, artworkUrl100: String?, artworkUrl600: String?, collectionPrice: Int?, trackPrice: Int?, trackRentalPrice: Int?, collectionHdPrice: Int?, trackHdPrice: Int?, trackHdRentalPrice: Int?, releaseDate: Date?, collectionExplicitness: Explicitness?, trackExplicitness: Explicitness?, trackCount: Int?, country: String?, currency: String?, contentAdvisoryRating: Rating?, primaryGenreName: String?, genreIds: [Int]?, genres: [String]?) {
+        self.wrapperType = wrapperType
+        self.kind = kind
+        self.collectionId = collectionId
+        self.trackId = trackId
+        self.artistName = artistName
+        self.collectionName = collectionName
+        self.trackName = trackName
+        self.collectionCensoredName = collectionCensoredName
+        self.trackCensoredName = trackCensoredName
+        self.collectionViewUrl = collectionViewUrl
+        self.feedUrl = feedUrl
+        self.trackViewUrl = trackViewUrl
+        self.artworkUrl30 = artworkUrl30
+        self.artworkUrl60 = artworkUrl60
+        self.artworkUrl100 = artworkUrl100
+        self.artworkUrl600 = artworkUrl600
+        self.collectionPrice = collectionPrice
+        self.trackPrice = trackPrice
+        self.trackRentalPrice = trackRentalPrice
+        self.collectionHdPrice = collectionHdPrice
+        self.trackHdPrice = trackHdPrice
+        self.trackHdRentalPrice = trackHdRentalPrice
+        self.releaseDate = releaseDate
+        self.collectionExplicitness = collectionExplicitness
+        self.trackExplicitness = trackExplicitness
+        self.trackCount = trackCount
+        self.country = country
+        self.currency = currency
+        self.contentAdvisoryRating = contentAdvisoryRating
+        self.primaryGenreName = primaryGenreName
+        self.genreIds = genreIds
+        self.genres = genres
+    }
 }
 
 public enum Explicitness: String, Codable, Hashable, Sendable {

@@ -26,4 +26,11 @@ public struct CategoriesResponse: Codable, Hashable, Sendable {
 		case count
 		case categoriesResponseDescription = "description"
 	}
+    
+    public init(responseStatus: String?, feeds: [PodcastCategory]?, count: Int?, categoriesResponseDescription: String?) {
+        self.responseStatus = responseStatus
+        self.feeds = feeds
+        self.count = count
+        self.categoriesResponseDescription = categoriesResponseDescription
+    }
 }

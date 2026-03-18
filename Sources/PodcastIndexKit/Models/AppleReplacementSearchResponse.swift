@@ -4,4 +4,9 @@ public struct AppleReplacementSearchResponse: Codable, Hashable, Sendable {
 	
 	/// List of feeds matching request
 	public let results: [AppleReplacementPodcast]?
+    
+    public init(resultCount: Int?, results: [AppleReplacementPodcast]?) {
+        self.resultCount = resultCount
+        self.results = results
+    }
 }
