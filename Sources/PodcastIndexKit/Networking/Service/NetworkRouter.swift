@@ -17,7 +17,7 @@ protocol NetworkRouterDelegate: AnyObject {
 protocol NetworkRouterProtocol: AnyObject {
     associatedtype Endpoint: EndpointType
     var delegate: NetworkRouterDelegate? { get set }
-    func execute<T: Decodable>(_ route: Endpoint) async throws -> T
+    func execute<T: Decodable & Sendable>(_ route: Endpoint) async throws -> T
 }
 
 public enum NetworkError : Error, Sendable {
@@ -65,7 +65,7 @@ internal class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
     /// This generic method will take a route and return the desired type via a network call
     /// This method is async and it can throw errors
     /// - Returns: The generic type is returned
-    func execute<T: Decodable>(_ route: Endpoint) async throws -> T {
+    func execute<T: Decodable & Sendable>(_ route: Endpoint) async throws -> T {
         guard var request = try? await buildRequest(from: route) else { throw NetworkError.encodingFailed }
         try await delegate?.intercept(&request)
 
@@ -73,13 +73,18 @@ internal class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
         guard let httpResponse = response as? HTTPURLResponse else { throw NetworkError.noStatusCode }
         switch httpResponse.statusCode {
         case 200...299:
-            return try decoder.decode(T.self, from: data)
+            return try await Self.decode(T.self, from: data, using: decoder)
         default:
             let statusCode = StatusCode(rawValue: httpResponse.statusCode)
             throw NetworkError.statusCode(statusCode, data: data)
         }
     }
 
+    /// Decodes off `PodcastActor` so large responses don't serialize every other request behind them.
+    nonisolated private static func decode<T: Decodable & Sendable>(_ type: T.Type, from data: Data, using decoder: JSONDecoder) async throws -> T {
+        try decoder.decode(T.self, from: data)
+    }
+    
     func buildRequest(from route: Endpoint) async throws -> URLRequest {
 
         var request = await URLRequest(url: route.baseURL.appendingPathComponent(route.path),
