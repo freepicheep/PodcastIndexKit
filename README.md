@@ -25,6 +25,10 @@ let package = Package(
 
 Swift 5.9 is required in order to run the plugin.
 
+### Platforms
+
+PodcastIndexKit runs on Apple platforms and Linux. On Linux it uses [swift-crypto](https://github.com/apple/swift-crypto) for request signing and `FoundationNetworking` for HTTP, so it can be used from server-side Swift (Hummingbird, Vapor).
+
 ### Setup
 
 Before making any API requests you must setup the `PodcastIndexKit` package using the `setup` method.  
