@@ -29,6 +29,22 @@ public struct EpisodeResponse: Codable, Hashable, Identifiable, Sendable {
 		}
 	}
 	
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		responseStatus = try container.decodeIfPresent(String.self, forKey: .responseStatus)
+		// /episodes/byid sends the queried id as a number, /episodes/byguid as a string.
+		if let intID = try? container.decodeIfPresent(Int.self, forKey: .id) {
+			id = String(intID)
+		} else {
+			id = try? container.decodeIfPresent(String.self, forKey: .id)
+		}
+		url = try container.decodeIfPresent(String.self, forKey: .url)
+		guid = try container.decodeIfPresent(String.self, forKey: .guid)
+		podcastGuid = try container.decodeIfPresent(String.self, forKey: .podcastGuid)
+		episode = try container.decodeIfPresent(Episode.self, forKey: .episode)
+		episodeResponseDescription = try container.decodeIfPresent(String.self, forKey: .episodeResponseDescription)
+	}
+	
 	enum CodingKeys: String, CodingKey {
 		case responseStatus = "status"
 		case id

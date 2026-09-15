@@ -1,0 +1,11 @@
+{
+ "status": "true",
+ "feeds": [
+  {
+   "id": 2,
+   "name": "Books"
+  }
+ ],
+ "count": 1,
+ "description": "Found matching feed"
+}

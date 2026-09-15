@@ -1,0 +1,17 @@
+{
+ "status": "true",
+ "feeds": [
+  {
+   "id": 75075,
+   "url": "https://feeds.theincomparable.com/batmanuniversity",
+   "image": "https://www.theincomparable.com/imgs/logos/logo-batmanuniversity-3x.jpg?cache-buster=2019-06-11",
+   "timeAdded": 1613786624,
+   "status": "confirmed",
+   "contentHash": "a652d25b56f3e2f0e069c0cc72145a85",
+   "language": "en-us"
+  }
+ ],
+ "count": 1,
+ "max": 2,
+ "description": "Found matching feed"
+}

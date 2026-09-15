@@ -1,0 +1,25 @@
+{
+ "status": "true",
+ "query": {
+  "id": "920666"
+ },
+ "value": {
+  "model": {
+   "type": "lightning",
+   "method": "keysend",
+   "suggested": "0.00000020000"
+  },
+  "destinations": [
+   {
+    "name": "podcaster",
+    "address": "03ae9f91a0cb8ff43840e3c322c4c61f019d8c1c3cea15a25cfc425ac605e61a4a",
+    "type": "node",
+    "split": 99,
+    "fee": true,
+    "customKey": "112111100",
+    "customValue": "wal_ZmqFg13NB31oek"
+   }
+  ]
+ },
+ "description": "Found matching feed"
+}

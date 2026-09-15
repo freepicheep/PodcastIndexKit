@@ -1,0 +1,19 @@
+{
+ "status": "true",
+ "feeds": [
+  {
+   "id": 75075,
+   "url": "https://feeds.theincomparable.com/batmanuniversity",
+   "title": "Batman University",
+   "newestItemPublishTime": 1546399813,
+   "oldestItemPublishTime": 1546399813,
+   "itunesId": 1441923632,
+   "language": "en-us",
+   "categories": {}
+  }
+ ],
+ "count": 1,
+ "max": 2,
+ "since": 1613805249,
+ "description": "Found matching feed"
+}

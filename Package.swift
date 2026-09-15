@@ -31,6 +31,7 @@ let package = Package(
             ]),
         .testTarget(
             name: "PodcastIndexKitTests",
-            dependencies: ["PodcastIndexKit"]),
+            dependencies: ["PodcastIndexKit"],
+            resources: [.copy("Fixtures")]),
     ]
 )

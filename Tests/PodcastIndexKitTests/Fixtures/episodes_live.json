@@ -1,0 +1,28 @@
+{
+ "status": "true",
+ "items": [
+  {
+   "id": 16795088,
+   "title": "Batman University",
+   "link": "https://www.theincomparable.com/batmanuniversity/",
+   "guid": "incomparable/batman/19",
+   "datePublished": 1546399813,
+   "datePublishedPretty": "January 01, 2019 9:30pm",
+   "dateCrawled": 1598369047,
+   "enclosureUrl": "https://www.theincomparable.com/podcast/batmanuniversity302.mp3",
+   "enclosureType": "audio/mp3",
+   "enclosureLength": 26385472,
+   "explicit": 0,
+   "image": "https://www.theincomparable.com/imgs/logos/logo-batmanuniversity-3x.jpg?cache-buster=2019-06-11",
+   "feedItunesId": 1441923632,
+   "feedImage": "https://www.theincomparable.com/imgs/logos/logo-batmanuniversity-3x.jpg?cache-buster=2019-06-11",
+   "feedId": 75075,
+   "feedTitle": "Batman University",
+   "feedLanguage": "en-us",
+   "categories": {}
+  }
+ ],
+ "count": 1,
+ "max": 2,
+ "description": "Found matching feed"
+}

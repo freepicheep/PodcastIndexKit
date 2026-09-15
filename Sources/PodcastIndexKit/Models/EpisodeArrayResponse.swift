@@ -30,9 +30,32 @@ public struct EpisodeArrayResponse: Codable, Hashable, Sendable {
         case responseStatus = "status"
         case liveItems
         case items
+        case episodes
         case count
         case query
         case episodeArrayResponseDescription = "description"
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        responseStatus = try container.decodeIfPresent(String.self, forKey: .responseStatus)
+        liveItems = try container.decodeIfPresent([Episode].self, forKey: .liveItems)
+        // /episodes/random returns its results under "episodes" rather than "items".
+        items = try container.decodeIfPresent([Episode].self, forKey: .items)
+            ?? container.decodeIfPresent([Episode].self, forKey: .episodes)
+        count = try container.decodeIfPresent(Int.self, forKey: .count)
+        query = try? container.decodeIfPresent(EpisodeResponsesQuery.self, forKey: .query)
+        episodeArrayResponseDescription = try container.decodeIfPresent(String.self, forKey: .episodeArrayResponseDescription)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(responseStatus, forKey: .responseStatus)
+        try container.encodeIfPresent(liveItems, forKey: .liveItems)
+        try container.encodeIfPresent(items, forKey: .items)
+        try container.encodeIfPresent(count, forKey: .count)
+        try container.encodeIfPresent(query, forKey: .query)
+        try container.encodeIfPresent(episodeArrayResponseDescription, forKey: .episodeArrayResponseDescription)
     }
 }
 

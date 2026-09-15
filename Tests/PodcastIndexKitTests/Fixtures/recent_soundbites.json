@@ -1,0 +1,18 @@
+{
+ "status": "true",
+ "items": [
+  {
+   "enclosureUrl": "https://www.theincomparable.com/podcast/batmanuniversity302.mp3",
+   "title": "Why the Podcast Namespace Matters",
+   "startTime": 1123,
+   "duration": 40,
+   "episodeId": 16795088,
+   "episodeTitle": "Gotham",
+   "feedTitle": "Batman University",
+   "feedUrl": "https://feeds.theincomparable.com/batmanuniversity",
+   "feedId": 75075
+  }
+ ],
+ "count": 1,
+ "description": "Found matching feed"
+}
