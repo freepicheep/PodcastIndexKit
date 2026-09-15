@@ -1,8 +1,11 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 @PodcastActor
 protocol NetworkRouterDelegate: AnyObject {
-    func intercept(_ request: inout URLRequest) async
+    func intercept(_ request: inout URLRequest) async throws
     func shouldRetry(error: Error, attempts: Int) async throws -> Bool
 }
 
@@ -24,44 +27,49 @@ public enum NetworkError : Error, Sendable {
     case noStatusCode
     case noData
     case tokenRefresh
+    case notConfigured
 }
 
 typealias HTTPHeaders = [String:String]
 
+/// A single `URLSession` shared by every router so connections to the index are pooled and reused.
+enum SharedNetworking {
+    static let session: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        configuration.httpMaximumConnectionsPerHost = 16
+        return URLSession(configuration: configuration)
+    }()
+}
+
 /// The NetworkRouter is a generic class that has an ``EndpointType`` and it conforms to ``NetworkRouterProtocol`
 @PodcastActor
 internal class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
-    
+
     weak var delegate: NetworkRouterDelegate?
     let networking: Networking
-    let urlSessionTaskDelegate: URLSessionTaskDelegate?
-    var decoder: JSONDecoder
-    
-    init(networking: Networking? = nil, urlSessionDelegate: URLSessionDelegate? = nil, urlSessionTaskDelegate: URLSessionTaskDelegate? = nil, decoder: JSONDecoder? = nil) {
-        if let networking = networking {
-            self.networking = networking
-        } else {
-            self.networking = URLSession(configuration: URLSessionConfiguration.default, delegate: urlSessionDelegate, delegateQueue: nil)
-        }
-        
-        self.urlSessionTaskDelegate = urlSessionTaskDelegate
-        
+    let decoder: JSONDecoder
+
+    init(networking: Networking? = nil, decoder: JSONDecoder? = nil) {
+        self.networking = networking ?? URLSessionNetworking(session: SharedNetworking.session)
+
         if let decoder = decoder {
             self.decoder = decoder
         } else {
-            self.decoder = JSONDecoder()
-            self.decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            self.decoder = decoder
         }
     }
-    
+
     /// This generic method will take a route and return the desired type via a network call
     /// This method is async and it can throw errors
     /// - Returns: The generic type is returned
     func execute<T: Decodable>(_ route: Endpoint) async throws -> T {
         guard var request = try? await buildRequest(from: route) else { throw NetworkError.encodingFailed }
-        await delegate?.intercept(&request)
-        
-        let (data, response) = try await networking.data(for: request, delegate: urlSessionTaskDelegate)
+        try await delegate?.intercept(&request)
+
+        let (data, response) = try await networking.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else { throw NetworkError.noStatusCode }
         switch httpResponse.statusCode {
         case 200...299:
@@ -71,33 +79,25 @@ internal class NetworkRouter<Endpoint: EndpointType>: NetworkRouterProtocol {
             throw NetworkError.statusCode(statusCode, data: data)
         }
     }
-    
+
     func buildRequest(from route: Endpoint) async throws -> URLRequest {
-        
+
         var request = await URLRequest(url: route.baseURL.appendingPathComponent(route.path),
                                        cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
                                        timeoutInterval: 10.0)
-        
+
         request.httpMethod = route.httpMethod.rawValue
-        do {
-            switch await route.task {
-            case .request:
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                await addAdditionalHeaders(route.headers, request: &request)
-            case .requestParameters(let parameterEncoding):
-                await addAdditionalHeaders(route.headers, request: &request)
-                try configureParameters(parameterEncoding: parameterEncoding, request: &request)
-            }
-            return request
-        } catch {
-            throw error
+        switch await route.task {
+        case .request:
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            addAdditionalHeaders(await route.headers, request: &request)
+        case .requestParameters(let parameterEncoding):
+            addAdditionalHeaders(await route.headers, request: &request)
+            try parameterEncoding.encode(urlRequest: &request)
         }
+        return request
     }
-    
-    private func configureParameters(parameterEncoding: ParameterEncoding, request: inout URLRequest) throws {
-        try parameterEncoding.encode(urlRequest: &request)
-    }
-    
+
     private func addAdditionalHeaders(_ additionalHeaders: HTTPHeaders?, request: inout URLRequest) {
         guard let headers = additionalHeaders else { return }
         for (key, value) in headers {

@@ -16,10 +16,16 @@ let package = Package(
             name: "PodcastIndexKit",
             targets: ["PodcastIndexKit"]),
     ],
-    dependencies: [],
+    dependencies: [
+        // CryptoKit is not available on Linux; swift-crypto provides the same API there.
+        .package(url: "https://github.com/apple/swift-crypto.git", "3.0.0"..<"5.0.0"),
+    ],
     targets: [
         .target(
             name: "PodcastIndexKit",
+            dependencies: [
+                .product(name: "Crypto", package: "swift-crypto", condition: .when(platforms: [.linux, .android, .windows])),
+            ],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency")
             ]),

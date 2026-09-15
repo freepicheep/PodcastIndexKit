@@ -1,8 +1,16 @@
-@preconcurrency import Foundation
+import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
-@PodcastActor
-protocol Networking {
-    func data(for request: URLRequest, delegate: URLSessionTaskDelegate?) async throws -> (Data, URLResponse)
+protocol Networking: Sendable {
+    func data(for request: URLRequest) async throws -> (Data, URLResponse)
 }
 
-extension URLSession: Networking { }
+struct URLSessionNetworking: Networking {
+    let session: URLSession
+
+    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+        try await session.data(for: request)
+    }
+}
