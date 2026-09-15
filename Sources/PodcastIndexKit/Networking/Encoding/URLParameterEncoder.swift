@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 struct URLParameterEncoder: ParameterEncoder {
     /// Configures how `Array` parameters are encoded.
@@ -58,47 +61,17 @@ struct URLParameterEncoder: ParameterEncoder {
         guard let url = urlRequest.url else { throw NetworkError.missingURL }
         
         if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), !parameters.isEmpty {
-            var items = urlComponents.queryItems ?? []
-            items.append(contentsOf: parameters)
-            urlComponents.queryItems = items
+            // `queryItems` leaves characters like "+" and "&" unescaped, which the index would misread
+            // (e.g. a search for "c++" becomes "c  "), so escape with the stricter RFC 3986 set ourselves.
+            var items = urlComponents.percentEncodedQueryItems ?? []
+            items.append(contentsOf: parameters.map { URLQueryItem(name: escape($0.name), value: $0.value.map(escape)) })
+            urlComponents.percentEncodedQueryItems = items
             urlRequest.url = urlComponents.url
         }
         
         if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
             urlRequest.setValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
         }
-    }
-    
-    /// Creates a percent-escaped, URL encoded query string components from the given key-value pair recursively.
-    ///
-    /// - Parameters:
-    ///   - key:   Key of the query component.
-    ///   - value: Value of the query component.
-    ///
-    /// - Returns: The percent-escaped, URL encoded query string components.
-    func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
-        var components: [(String, String)] = []
-        switch value {
-        case let dictionary as [String: Any]:
-            for (nestedKey, value) in dictionary {
-                components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
-            }
-        case let array as [Any]:
-            for (index, value) in array.enumerated() {
-                components += queryComponents(fromKey: arrayEncoding.encode(key: key, atIndex: index), value: value)
-            }
-        case let number as NSNumber:
-            if number.isBool {
-                components.append((escape(key), escape(boolEncoding.encode(value: number.boolValue))))
-            } else {
-                components.append((escape(key), escape("\(number)")))
-            }
-        case let bool as Bool:
-            components.append((escape(key), escape(boolEncoding.encode(value: bool))))
-        default:
-            components.append((escape(key), escape("\(value)")))
-        }
-        return components
     }
     
     /// Creates a percent-escaped string following RFC 3986 for a query string key or value.
@@ -108,13 +81,5 @@ struct URLParameterEncoder: ParameterEncoder {
     /// - Returns:          The percent-escaped `String`.
     func escape(_ string: String) -> String {
         string.addingPercentEncoding(withAllowedCharacters: characterSet) ?? string
-    }
-}
-
-extension NSNumber {
-    fileprivate var isBool: Bool {
-        // Use Obj-C type encoding to check whether the underlying type is a `Bool`, as it's guaranteed as part of
-        // swift-corelibs-foundation, per [this discussion on the Swift forums](https://forums.swift.org/t/alamofire-on-linux-possible-but-not-release-ready/34553/22).
-        String(cString: objCType) == "c"
     }
 }
