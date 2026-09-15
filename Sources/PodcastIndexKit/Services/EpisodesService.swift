@@ -27,6 +27,18 @@ public struct EpisodesService: Sendable {
         try await router.execute(.byFeedID(id: id, since: since, max: max, enclosure: enclosure, fulltext: fulltext, pretty: pretty))
     }
     
+    /// Returns the most recent episodes across up to 200 feeds in a single request, in reverse chronological order.
+    /// This is the efficient way to build a "new episodes" inbox for a list of subscriptions.
+    ///
+    /// - parameter ids: (Required) PodcastIndex Feed IDs. A maximum of 200 IDs can be provided.
+    /// - parameter since: Only return episodes published after this date.
+    /// - parameter max: Maximum number of results to return.
+    /// - parameter fulltext: Return the full text value of any text fields instead of truncating to 100 words.
+    /// - returns: an `EpisodeArrayResponse` object containing an array of `Episode`s.
+    public func episodes(byFeedIDs ids: [Int], since: Date? = nil, max: Int? = nil, fulltext: Bool = false) async throws -> EpisodeArrayResponse {
+        try await episodes(byFeedID: ids.map(String.init).joined(separator: ","), since: since, max: max, fulltext: fulltext)
+    }
+    
     /// This call returns all the episodes we know about for this feed from the feed URL. Episodes are in reverse chronological order.
     ///
     /// - parameter url: (Required) Podcast feed URL

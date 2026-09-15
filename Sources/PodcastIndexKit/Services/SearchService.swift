@@ -54,7 +54,19 @@ public struct SearchService: Sendable {
     /// - parameter fulltext: If present, return the full text value of any text fields (ex: description). If not provided, field value is truncated to 100 words. Parameter shall not have a value
     /// - parameter pretty: If present, makes the output “pretty” to help with debugging. Parameter shall not have a value
     /// - returns: a `SearchResults` object which is an array of `Podcast`s.
+    @available(*, deprecated, renamed: "searchEpisodes(byPerson:max:fulltext:pretty:)", message: "/search/byperson returns episodes, not podcasts")
     public func search(byPerson q: String, max: Int? = nil, fulltext: Bool = false, pretty: Bool = false) async throws -> PodcastArrayResponse {
+        try await router.execute(.byPerson(q: q, max: max, fulltext: fulltext, pretty: pretty))
+    }
+    
+    /// This call returns all of the episodes where the specified person is mentioned
+    /// (person tags, episode title and description, feed owner and author).
+    /// - parameter q: (Required) Person to search for
+    /// - parameter max: Maximum number of results to return.
+    /// - parameter fulltext: If present, return the full text value of any text fields (ex: description). If not provided, field value is truncated to 100 words.
+    /// - parameter pretty: If present, makes the output “pretty” to help with debugging.
+    /// - returns: an `EpisodeArrayResponse` object containing an array of `Episode`s.
+    public func searchEpisodes(byPerson q: String, max: Int? = nil, fulltext: Bool = false, pretty: Bool = false) async throws -> EpisodeArrayResponse {
         try await router.execute(.byPerson(q: q, max: max, fulltext: fulltext, pretty: pretty))
     }
     

@@ -22,8 +22,21 @@ public struct RecentService: Sendable {
     ///- parameter pretty: If present, makes the output “pretty” to help with debugging.
     /// Parameter shall not have a value
     /// - returns: an `EpisodeArrayResponse` object containing an array of `Episode`s.
-    public func recentEpisodes(max: Int? = nil, excludeString: String? = nil, before: Date? = nil, fulltext: Bool = false, pretty: Bool = false) async throws -> EpisodeArrayResponse {
-        try await router.execute(.episodes(max: max, excludeString: excludeString, before: before, fulltext: fulltext, pretty: pretty))
+    @available(*, deprecated, message: "The index's `before` parameter is an episode ID, not a date. Use recentEpisodes(max:excludeString:beforeEpisodeID:fulltext:pretty:)")
+    public func recentEpisodes(max: Int? = nil, excludeString: String? = nil, before: Date?, fulltext: Bool = false, pretty: Bool = false) async throws -> EpisodeArrayResponse {
+        try await router.execute(.episodes(max: max, excludeString: excludeString, before: before.map { Int($0.timeIntervalSince1970) }, fulltext: fulltext, pretty: pretty))
+    }
+    
+    /// This call returns the most recent max number of episodes globally across the whole index, in reverse chronological order.
+    ///
+    ///- parameter max: Maximum number of results to return.
+    ///- parameter excludeString: Any item containing this string will be discarded from the result set.
+    ///- parameter beforeEpisodeID: Only return episodes before this PodcastIndex Episode ID, allowing you to walk back through the episode history sequentially.
+    ///- parameter fulltext: If present, return the full text value of any text fields (ex: description). If not provided, field value is truncated to 100 words.
+    ///- parameter pretty: If present, makes the output “pretty” to help with debugging.
+    /// - returns: an `EpisodeArrayResponse` object containing an array of `Episode`s.
+    public func recentEpisodes(max: Int? = nil, excludeString: String? = nil, beforeEpisodeID: Int? = nil, fulltext: Bool = false, pretty: Bool = false) async throws -> EpisodeArrayResponse {
+        try await router.execute(.episodes(max: max, excludeString: excludeString, before: beforeEpisodeID, fulltext: fulltext, pretty: pretty))
     }
     
     /// This call returns the most recent max feeds, in reverse chronological order.
@@ -95,7 +108,7 @@ public struct RecentService: Sendable {
 }
 
 enum RecentAPI {
-    case episodes(max: Int?, excludeString: String?, before: Date?, fulltext: Bool, pretty: Bool)
+    case episodes(max: Int?, excludeString: String?, before: Int?, fulltext: Bool, pretty: Bool)
     case feeds(max: Int?, since: Date?, lang: String?, cat: String?, notcat: String?, pretty: Bool)
     case newFeeds(max: Int?, since: Date?, feedid: String?, desc: Bool, pretty: Bool)
     case data(max: Int?, since: Date?, pretty: Bool)
